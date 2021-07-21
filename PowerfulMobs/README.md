@@ -8,5 +8,5 @@ Plugin version: 1.1
 This plugin increases the difficulty of the base game by slightly changing mob-spawning.\
 Changes implemented so far:
 - `zombie`s become `baby zombie`s\
-- `skeleton`s become `stray`s
+- `skeleton`s become `stray`s\
 - `creeper`s spawn charged
