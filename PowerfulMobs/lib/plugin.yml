@@ -1,6 +1,0 @@
-name: PowerfulMobs
-version: 1.0
-author: Thomas Herbert
-main: me.Herbert.Thomas.MinecraftPlugins.PowerfulMobs.Main
-description: Changes certain mobs to add more of a challenge
-api-version: 1.17
