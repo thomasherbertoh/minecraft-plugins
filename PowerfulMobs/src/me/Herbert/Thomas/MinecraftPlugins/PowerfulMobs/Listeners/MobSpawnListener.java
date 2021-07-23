@@ -3,9 +3,13 @@ package me.Herbert.Thomas.MinecraftPlugins.PowerfulMobs.Listeners;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,12 +36,27 @@ public class MobSpawnListener implements Listener {
         this.plugin = plugin;
     }
 
+    private Player getNearestPlayer(Entity e) {
+        double min_dist = Double.MAX_VALUE;
+        double dist = Double.MAX_VALUE;
+        Player target = null;
+        for (Player p : e.getWorld().getPlayers()) {
+            dist = p.getLocation().distance(e.getLocation());
+            if (dist < min_dist) {
+                min_dist = dist;
+                target = p;
+            }
+        }
+        return target;
+    }
+
     @EventHandler
     public void creatureSpawn(CreatureSpawnEvent event) {
         // mobs spawned by the plugin enter here
         if (event.getSpawnReason().equals(SpawnReason.CUSTOM)) {
             return;
         }
+        Player target;
         switch (event.getEntity().getType()) {
             case ZOMBIE:
                 Zombie z = (Zombie) event.getEntity();
@@ -73,6 +92,31 @@ public class MobSpawnListener implements Listener {
                     Bat b = (Bat) event.getEntity();
                     event.setCancelled(true);
                     b.getWorld().spawnEntity(b.getLocation(), EntityType.VEX);
+                }
+                break;
+            case WOLF:
+                Wolf w = (Wolf) event.getEntity();
+                w.setAngry(true);
+                target = getNearestPlayer(w);
+                if (target != null) {
+                    w.setTarget(target);
+                }
+                break;
+            case PIGLIN:
+            case ZOMBIFIED_PIGLIN:
+                Entity p = event.getEntity();
+                event.setCancelled(true);
+                PiglinBrute pb = (PiglinBrute) p.getWorld().spawnEntity(p.getLocation(), EntityType.PIGLIN_BRUTE);
+                target = getNearestPlayer(pb);
+                if (target != null) {
+                    pb.setTarget(target);
+                }
+                break;
+            case ENDERMAN:
+                Enderman e = (Enderman) event.getEntity();
+                target = getNearestPlayer(e);
+                if (target != null) {
+                    e.setTarget(target);
                 }
                 break;
             default:

@@ -10,4 +10,7 @@ Changes implemented so far:
 - `zombie`s become `baby zombie`s
 - `skeleton`s become `stray`s
 - `creeper`s spawn charged
-- `bat`s become `vexes` (limit of `20` in loaded chunks to avoid lag)
+- `bat`s become `vex`es (limit of `20` in loaded chunks to avoid lag)
+- `wolf`s spawn angry at the nearest player
+- `piglin`s and `zombified piglin`s spawn as `piglin brute`s, angry at the nearest player
+- `endermen` spawn angry at the nearest player
