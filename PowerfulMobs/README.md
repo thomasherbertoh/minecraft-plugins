@@ -16,4 +16,4 @@ Changes implemented so far:
 - `endermen` spawn angry at the nearest player
 - `spider`s become `cave spider`s
 - `rabbit`s become `The Killer Bunny`s
-- `pig`s become `hoglins`
+- `pig`s become `hoglin`s
