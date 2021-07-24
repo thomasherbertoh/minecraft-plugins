@@ -1,7 +1,7 @@
 ## Version Details
 
 Minecraft version: 1.16.5\
-Plugin version: 1.2
+Plugin version: 1.3
 
 ## Plugin Details
 
@@ -15,4 +15,5 @@ Changes implemented so far:
 - `piglin`s and `zombified piglin`s spawn as `piglin brute`s, angry at the nearest player
 - `endermen` spawn angry at the nearest player
 - `spider`s become `cave spider`s
-- `rabbit`s become `The Killer Bunny`s, angry at the nearest player (only works when not randomly spawned)
+- `rabbit`s become `The Killer Bunny`s
+- `pig`s become `hoglins`

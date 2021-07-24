@@ -8,6 +8,8 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.PiglinBrute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -20,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 import me.Herbert.Thomas.MinecraftPlugins.PowerfulMobs.Main.Main;
@@ -118,16 +121,30 @@ public class MobSpawnListener implements Listener {
                     e.setTarget(target);
                 }
                 break;
-            case RABBIT:
-                Rabbit r = (Rabbit) event.getEntity();
-                r.setRabbitType(Rabbit.Type.THE_KILLER_BUNNY);
-                target = getNearestPlayer(r);
-                if (target != null) {
-                    r.setTarget(target);
-                }
-                break;
             default:
                 break;
+        }
+    }
+
+    @EventHandler
+    public void populateChunk(ChunkPopulateEvent event) {
+        Chunk c = event.getChunk();
+        for (Entity e : c.getEntities()) {
+            switch (e.getType()) {
+                case RABBIT:
+                    Rabbit r = (Rabbit) e;
+                    r.setRabbitType(Rabbit.Type.THE_KILLER_BUNNY);
+                    r.setRemoveWhenFarAway(false);
+                    break;
+                case PIG:
+                    Pig p = (Pig) e;
+                    p.remove();
+                    Hoglin h = (Hoglin) p.getWorld().spawnEntity(p.getLocation(), EntityType.HOGLIN);
+                    h.setImmuneToZombification(true);
+                    h.setRemoveWhenFarAway(false);
+                default:
+                    break;
+            }
         }
     }
 
