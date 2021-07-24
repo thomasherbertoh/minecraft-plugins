@@ -15,4 +15,4 @@ Changes implemented so far:
 - `piglin`s and `zombified piglin`s spawn as `piglin brute`s, angry at the nearest player
 - `endermen` spawn angry at the nearest player
 - `spider`s become `cave spider`s
-- `rabbit`s become `The Killer Bunny`s (when not randomly spawned)
+- `rabbit`s become `The Killer Bunny`s, angry at the nearest player (only works when not randomly spawned)
