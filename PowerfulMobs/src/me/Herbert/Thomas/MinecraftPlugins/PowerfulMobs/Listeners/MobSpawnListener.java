@@ -1,14 +1,18 @@
 package me.Herbert.Thomas.MinecraftPlugins.PowerfulMobs.Listeners;
 
 import org.bukkit.Chunk;
+import org.bukkit.Difficulty;
 import org.bukkit.entity.Bat;
+import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.PiglinBrute;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Spider;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -72,19 +76,14 @@ public class MobSpawnListener implements Listener {
                 c.setPowered(true);
                 break;
             case SPIDER:
-                // TODO: add spider jockeys
-                /*
-                 * CraftWorld cw = (CraftWorld) event.getEntity().getWorld(); World w =
-                 * cw.getHandle(); EntitySpider spider = new EntitySpider(EntityTypes.SPIDER,
-                 * w); EntitySkeleton skeleton = new EntitySkeleton(EntityTypes.SKELETON, w);
-                 * skeleton.spawnIn(w); spider.spawnIn(w); skeleton.startRiding(spider);
-                 */
-
-                /*
-                 * Spider s = (Spider) event.getEntity(); Skeleton passenger = (Skeleton)
-                 * s.getWorld().spawnEntity(s.getLocation(), EntityType.SKELETON);
-                 * s.addPassenger(passenger);
-                 */
+                Spider s = (Spider) event.getEntity();
+                s.getWorld().setDifficulty(Difficulty.HARD);
+                event.setCancelled(true);
+                CaveSpider cs = (CaveSpider) s.getWorld().spawnEntity(s.getLocation(), EntityType.CAVE_SPIDER);
+                target = getNearestPlayer(s);
+                if (target != null) {
+                    cs.setTarget(target);
+                }
                 break;
             case BAT:
                 if (this.vex_count < this.VEX_LIMIT) {
@@ -117,6 +116,14 @@ public class MobSpawnListener implements Listener {
                 target = getNearestPlayer(e);
                 if (target != null) {
                     e.setTarget(target);
+                }
+                break;
+            case RABBIT:
+                Rabbit r = (Rabbit) event.getEntity();
+                r.setRabbitType(Rabbit.Type.THE_KILLER_BUNNY);
+                target = getNearestPlayer(r);
+                if (target != null) {
+                    r.setTarget(target);
                 }
                 break;
             default:
