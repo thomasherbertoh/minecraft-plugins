@@ -14,7 +14,7 @@ public class Main extends JavaPlugin {
     }
 
     public void onDisable() {
-		System.out.println("(!) Disabling PowerfulMobs (!)");
+	System.out.println("(!) Disabling PowerfulMobs (!)");
     }
 
 }
