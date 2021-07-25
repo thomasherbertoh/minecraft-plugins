@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -73,14 +72,13 @@ public class PlayerMovementListeners implements Listener {
 		if (!enabled) {
 			return;
 		}
-		Player p = event.getPlayer();
 		Location origin = event.getTo();
 		boolean update;
 		for (int x = origin.getBlockX() - updateRadius; x < origin.getBlockX() + updateRadius; x++) {
 			for (int z = origin.getBlockZ() - updateRadius; z < origin.getBlockZ() + updateRadius; z++) {
 				update = false;
 				for (int y = origin.getBlockY() - yUpdateRadius; y < origin.getBlockY() + yUpdateRadius; y++) {
-					Block block = p.getWorld().getBlockAt(x, y, z);
+					Block block = origin.getWorld().getBlockAt(x, y, z);
 					if (block.isLiquid() || block.isEmpty()) {
 						update = true;
 					} else if (update && !block.isLiquid() && !block.isEmpty() && !noUpdate.contains(block.getType())) {
