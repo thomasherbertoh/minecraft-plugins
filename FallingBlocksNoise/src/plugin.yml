@@ -1,0 +1,23 @@
+name: FallingBlocksNoise
+version: 1.0
+author: Thomas Herbert
+main: me.Herbert.Thomas.MinecraftPlugins.FallingBlocksNoise.Main.Main
+description: Causes blocks to be affected by gravity based on a noise map
+api-version: 1.16
+
+commands:
+    enableGravity:
+        description: Allows gravity to affect all blocks. This could cause a lot of lag...but it's satisfying.
+        usage: /enableGravity
+    disableGravity:
+        description: Stops gravity from affecting all blocks. (Blocks affected by gravity in vanilla Minecraft will still be affected as usual)
+        usage: /disableGravity
+    setRange:
+        description: Set the distance the players' gravities reach. Higher values will cause more lag.
+        usage: /setRange <Integer radius>
+    getRange:
+        description: Find the distance the players' gravities reach. If this is a high value, it could be a cause of lag
+        usage: /getRange
+    getGravity:
+        description: Find out if the FallingBlocks plugin is enabled.
+        usage: /getGravity
