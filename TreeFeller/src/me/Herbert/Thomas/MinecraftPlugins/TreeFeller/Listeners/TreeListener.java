@@ -2,9 +2,10 @@ package me.Herbert.Thomas.MinecraftPlugins.TreeFeller.Listeners;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,6 +48,38 @@ public class TreeListener implements Listener {
 		this.plugin = plugin;
 	}
 
+	private int distanceToNearestLog(Block leafBlock) {
+		int minDistToLog = 7;
+		int distTravelled = 0;
+		Queue<Location> q = new LinkedList<>();
+		q.add(leafBlock.getLocation());
+		int blocks;
+		Block newBlock;
+		// while we are still in range of the original block
+		while (distTravelled + 1 < minDistToLog) {
+			distTravelled++;
+			// while we have blocks left at this level
+			blocks = q.size();
+			for (int i = 0; i < blocks; i++) {
+				newBlock = q.poll().getBlock();
+				// for each face of the current block
+				for (BlockFace bf : faces) {
+					// get the neighbour in that direction
+					Block neighbour = newBlock.getRelative(bf);
+					// if neighbour is a log
+					if (logs.contains(neighbour.getType())) {
+						// using BFS, so must be closest, can return
+						return distTravelled;
+					} else if (neighbour.getBlockData() instanceof Leaves) {
+						// not log, but could take us to one, so add to the queue of blocks to be looked at
+						q.add(neighbour.getLocation());
+					}
+				}
+			}
+		}
+		return minDistToLog;
+	}
+
 	@EventHandler
 	public void treeBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
@@ -80,7 +113,6 @@ public class TreeListener implements Listener {
 			loc = next_pair.getValue();
 
 			if (!loc.getBlock().getType().equals(Material.AIR)) {
-				Bukkit.broadcastMessage(String.format("breaking leaf block at location %s", loc.toString()));
 				loc.getBlock().breakNaturally();
 			}
 
@@ -92,7 +124,7 @@ public class TreeListener implements Listener {
 			}
 
 			Block leafBlock;
-			Leaves leaves;
+			int leafDist;
 			// for every direction
 			for (BlockFace bf : faces) {
 				// if block in that direction isn't leaves
@@ -101,13 +133,11 @@ public class TreeListener implements Listener {
 				}
 
 				leafBlock = loc.getBlock().getRelative(bf);
-				Bukkit.broadcastMessage(
-						String.format("before update: %d", ((Leaves) leafBlock.getBlockData()).getDistance()));
 				leafBlock.getState().update(true);
-				leaves = (Leaves) leafBlock.getBlockData();
 
 				// this block is close enough to another tree that it wouldn't decay naturally
-				if (leaves.getDistance() <= max_dist && leaves.getDistance() != dist) {
+				leafDist = distanceToNearestLog(leafBlock);
+				if (leafDist <= max_dist) {
 					continue;
 				}
 
