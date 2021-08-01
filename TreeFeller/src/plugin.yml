@@ -1,5 +1,5 @@
 name: TreeFeller
-version: 1.0
+version: 1.1
 author: Thomas Herbert
 main: me.Herbert.Thomas.MinecraftPlugins.TreeFeller.Main.Main
 description: Destroys entire trees when you break the bottom block of it

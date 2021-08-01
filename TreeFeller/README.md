@@ -1,7 +1,7 @@
 ## Version Details
 
 Minecraft version: 1.16.5\
-Plugin version: 1.0
+Plugin version: 1.1
 
 ## Plugin Details
 

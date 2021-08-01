@@ -6,14 +6,17 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.type.Leaves;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.util.Vector;
 
 import me.Herbert.Thomas.MinecraftPlugins.TreeFeller.Main.Main;
 import me.Herbert.Thomas.MinecraftPlugins.TreeFeller.Utils.IntegerLocationPair;
@@ -48,6 +51,17 @@ public class TreeListener implements Listener {
 		this.plugin = plugin;
 	}
 
+	private void scanInDirection(Location start, Vector step, PriorityQueue<IntegerLocationPair> queue) {
+		Location check = new Location(start.getWorld(), start.getX(), start.getY(), start.getZ());
+		check.add(step);
+		while (logs.contains(check.getBlock().getType())) {
+			check.getBlock().breakNaturally();
+			queue.add(new IntegerLocationPair(0,
+					new Location(check.getWorld(), check.getX(), check.getY(), check.getZ())));
+			check.add(step);
+		}
+	}
+
 	private int distanceToNearestLog(Block leafBlock) {
 		int minDistToLog = 7;
 		int distTravelled = 0;
@@ -71,7 +85,8 @@ public class TreeListener implements Listener {
 						// using BFS, so must be closest, can return
 						return distTravelled;
 					} else if (neighbour.getBlockData() instanceof Leaves) {
-						// not log, but could take us to one, so add to the queue of blocks to be looked at
+						// not log, but could take us to one, so add to the queue of blocks to be looked
+						// at
 						q.add(neighbour.getLocation());
 					}
 				}
@@ -95,12 +110,7 @@ public class TreeListener implements Listener {
 		PriorityQueue<IntegerLocationPair> pq = new PriorityQueue<IntegerLocationPair>();
 		// add logs to queue, breaking them in the process
 		Location check = block.getLocation();
-		while (logs.contains(check.getBlock().getType())) {
-			check.getBlock().breakNaturally();
-			pq.add(new IntegerLocationPair(0,
-					new Location(check.getWorld(), check.getBlockX(), check.getBlockY(), check.getBlockZ())));
-			check.setY(check.getY() + 1);
-		}
+		scanInDirection(check, new Vector(0, 1, 0), pq);
 
 		int max_dist = 6;
 		int dist = 0;
@@ -127,24 +137,39 @@ public class TreeListener implements Listener {
 			int leafDist;
 			// for every direction
 			for (BlockFace bf : faces) {
-				// if block in that direction isn't leaves
-				if (!(loc.getBlock().getRelative(bf).getBlockData() instanceof Leaves)) {
-					continue;
+				// if block in that direction is leaves
+				if (loc.getBlock().getRelative(bf).getBlockData() instanceof Leaves) {
+					leafBlock = loc.getBlock().getRelative(bf);
+					leafBlock.getState().update(true);
+
+					leafDist = distanceToNearestLog(leafBlock);
+					if (leafDist <= max_dist) {
+						// this block is close enough to another tree that it wouldn't decay naturally
+						continue;
+					}
+
+					// adding the location of the block to the queue along with it's distance
+					// have to explicitly create a copy because Java
+					pq.add(new IntegerLocationPair(dist + 1,
+							new Location(leafBlock.getWorld(), leafBlock.getX(), leafBlock.getY(), leafBlock.getZ())));
+				} else if (logs.contains(loc.getBlock().getRelative(bf).getType())
+						&& ((Orientable) loc.getBlock().getRelative(bf).getBlockData()).getAxis() != Axis.Y) {
+					// this is a branch of a large tree. cannot be jungle as jungle logs always
+					// generate on the Y axis whether they're a branch or a trunk and I'm trying not
+					// to clobbber every tree next to this one
+					Axis branchAxis = ((Orientable) loc.getBlock().getRelative(bf).getBlockData()).getAxis();
+					check = loc;
+					Vector vec;
+					if (branchAxis == Axis.X) {
+						// branch lies along x axis
+						vec = new Vector(1, 0, 0);
+					} else {
+						vec = new Vector(0, 0, 1);
+					}
+					scanInDirection(check, vec, pq);
+					vec.multiply(-1);
+					scanInDirection(check, vec, pq);
 				}
-
-				leafBlock = loc.getBlock().getRelative(bf);
-				leafBlock.getState().update(true);
-
-				// this block is close enough to another tree that it wouldn't decay naturally
-				leafDist = distanceToNearestLog(leafBlock);
-				if (leafDist <= max_dist) {
-					continue;
-				}
-
-				// adding the location of the block to the queue along with it's distance
-				// have to explicitly create a copy because Java
-				pq.add(new IntegerLocationPair(dist + 1,
-						new Location(leafBlock.getWorld(), leafBlock.getX(), leafBlock.getY(), leafBlock.getZ())));
 			}
 		}
 	}
