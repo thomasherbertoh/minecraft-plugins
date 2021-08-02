@@ -1,0 +1,14 @@
+name: Manhunt
+version: 1.0
+author: Thomas Herbert
+main: me.Herbert.Thomas.MinecraftPlugins.Manhunt.Main.Main
+description: Implements manhunt into Minecraft
+api-version: 1.16
+
+commands:
+    setHunter:
+        usage: /setHunter <name of hunter>
+    setRunner:
+        usage: /setRunner <name of runner>
+    compass:
+        usage: /compass
