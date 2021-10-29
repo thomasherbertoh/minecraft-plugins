@@ -1,0 +1,17 @@
+author: Thomas Herbert
+name: AntiPVP
+version: 1.2
+main: me.Herbert.Thomas.MinecraftPlugins.AntiPVP.Main
+description: Stops players from being able to hurt each other, with some instant karma thrown in for good luck.
+api-version: 1.16
+
+commands:
+    togglePVP:
+        description: If PVP is enabled, disables it. If PVP is disabled, enables it.
+        usage: /togglePVP
+    getPVP:
+        description: Tells the player if PVP is enabled or disabled.
+        usage: /getPVP
+    hit:
+        description: Tells the sender the 8 (or less) most recent hits.
+        usage: /hit blame --recent
